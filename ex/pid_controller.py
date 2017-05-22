@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 ''' PID Controller - for Robotic movement
 
     Example from Udacity Self Driving Car / Robotics
@@ -109,31 +110,46 @@ class Robot(object):
 #
 # run - does a single control run
 
+print('Init Robot')
 robot = Robot()
 robot.set(0, 1, 0)
 
 
 def run(robot, tau_p, tau_d, tau_i, n=100, speed=1.0):
+    '''
+        Runs the robot using given params
+        tau_p:  tau for Proportional Steering
+        tau_d:  tau for Differential Steering
+        tau_i:  tar for Integral Steering
+    '''
     x_trajectory = []
     y_trajectory = []
     # TODO: your code here
-    prev_cte = robot.y
-    cte_sum = 0
+    # CTE: Cross Track Error (i.e. bias from reference)
+
+    prev_cte = robot.y  # instantaneous CTE
+    cte_sum = 0         # accumulates the total (Integral) CTE 
     for i in range(n):
         cte = robot.y
         cte_diff = cte - prev_cte
         prev_cte = cte
         cte_sum += cte
+        # Steering angle is a func of Proportional, Integral, Differential errors
+        # weighted by their respective tau
         steer = -tau_p * cte - tau_d * cte_diff - tau_i * cte_sum
+        # move the robot
         robot.move(steer, speed)
+        # save current robot x,y
         x_trajectory.append(robot.x)
         y_trajectory.append(robot.y)
     return x_trajectory, y_trajectory
 
 
+print('Running robot...')
 x_trajectory, y_trajectory = run(robot, 0.2, 3.0, 0.004)
 n = len(x_trajectory)
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8,8))
 ax1.plot(x_trajectory, y_trajectory, 'g', label='PID controller')
 ax1.plot(x_trajectory, np.zeros(n), 'r', label='reference')
+plt.show()
