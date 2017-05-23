@@ -33,17 +33,17 @@ int main()
 {
   uWS::Hub h;
 
-  PID pid;
+  PID steering_pid;
   // init params
   double  Kp = 0.15;
   double  Ki = 0.0001;
   double  Kd = 2.0;
 
-  std::cout << "Initializing PID..." << std::endl;
+  std::cout << "Initializing steering_pid..." << std::endl;
   // TODO: Initialize the pid variable.
-  pid.Init(Kp, Ki, Kd);
+  steering_pid.Init(Kp, Ki, Kd);
 
-  h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&steering_pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -67,9 +67,9 @@ int main()
           */
 
           // 2.1 - Update CTE
-          pid.UpdateError(cte);
+          steering_pid.UpdateError(cte);
           // 2.2 - Get new steer value based on CTE
-          steer_value = -pid.TotalError();  
+          steer_value = -steering_pid.TotalError();  
           
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
