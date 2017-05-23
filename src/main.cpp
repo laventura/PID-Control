@@ -3,6 +3,7 @@
 #include "json.hpp"
 #include "PID.h"
 #include <math.h>
+#include "Helper.hpp"
 
 // for convenience
 using json = nlohmann::json;
@@ -33,7 +34,14 @@ int main()
   uWS::Hub h;
 
   PID pid;
+  // init params
+  double  Kp = 0.15;
+  double  Ki = 0.0001;
+  double  Kd = 2.0;
+
+  std::cout << "Initializing PID..." << std::endl;
   // TODO: Initialize the pid variable.
+  pid.Init(Kp, Ki, Kd);
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -46,7 +54,7 @@ int main()
         auto j = json::parse(s);
         std::string event = j[0].get<std::string>();
         if (event == "telemetry") {
-          // j[1] is the data JSON object
+          // 1 - j[1] is the data JSON object
           double cte = std::stod(j[1]["cte"].get<std::string>());
           double speed = std::stod(j[1]["speed"].get<std::string>());
           double angle = std::stod(j[1]["steering_angle"].get<std::string>());
@@ -57,6 +65,11 @@ int main()
           * NOTE: Feel free to play around with the throttle and speed. Maybe use
           * another PID controller to control the speed!
           */
+
+          // 2.1 - Update CTE
+          pid.UpdateError(cte);
+          // 2.2 - Get new steer value based on CTE
+          steer_value = -pid.TotalError();  
           
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
