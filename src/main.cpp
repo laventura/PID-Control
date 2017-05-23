@@ -37,8 +37,8 @@ int main()
 
   PID steering_pid;
   // Steering PID init params
-  double  Kp = 0.15;
-  double  Ki = 0.0001;
+  double  Kp = 0.13;
+  double  Ki = 0.0002;
   double  Kd = 2.0;
   // Throttle PID and params
   PID throttle_pid;
