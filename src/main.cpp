@@ -29,6 +29,7 @@ std::string hasData(std::string s) {
   return "";
 }
 
+// NOTE: A safe speed limit 😀 is between 50-70 mph.
 const double SPEED_LIMIT = 65.0;  // mph
 
 int main()
