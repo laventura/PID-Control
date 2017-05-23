@@ -29,7 +29,7 @@ std::string hasData(std::string s) {
   return "";
 }
 
-const double SPEED_LIMIT = 60.0;  // mph
+const double SPEED_LIMIT = 65.0;  // mph
 
 int main()
 {
@@ -42,7 +42,7 @@ int main()
   double  Kd = 2.0;
   // Throttle PID and params
   PID throttle_pid;
-  double  TKp = 0.15;
+  double  TKp = 0.12;
   double  TKi = 0.00001;
   double  TKd = 2.5;
 
@@ -83,11 +83,16 @@ int main()
           steering_pid.UpdateError(cte);
           // 2.2 - Get new steer value based on CTE
           steer_value = -steering_pid.TotalError();  
+          // smoothly clip the steering value: 
+          // NOTE: This smoothens out the rough/jerky motion of the vehicle
+          // NOTE: Even though the steering values are [-1, 1], we sometimes need sharper angles, 
+          // hence the values are slightly more than [-1, 1]
+          steer_value = sigmoid(steer_value, 1.25, -1.25);  
 
           // 3.1 - Update Throttle CTE
           throttle_pid.UpdateError(speed_cte);
           throttle_value  = -throttle_pid.TotalError();
-          // clip the throttle values
+          // smoothly clip the throttle values
           throttle_value = sigmoid(throttle_value, 1.0, -1.0);
           
           // DEBUG
