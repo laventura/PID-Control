@@ -1,6 +1,49 @@
 # CarND-Controls-PID
 Self-Driving Car Engineer Nanodegree Program
 
+## PID Controller
+
+A PID (_Proportional, Integral, Differential_) Controller is a control feedback mechanism used in robotics and industrial control systems. The PID controller continuously tracks an _error value e(t)_ as the difference between a desired threshold, and a measured process variable, and applies a continuous correction based on *proportional (P)*, *integral (I)*, and *differential (D)* terms. In the case of a Self Driving Car, a PID controller can be used to drive a car with reference to a particular offset from the lane lines (thru controlling the steering angle of the vehicle), and also a reference speed (thus controlling the throttle/accelerator).
+
+### Mechanism
+
+A PID Controller attempts to minimize the error over time by adjusting control variable `u(t)` based on tracking the error *Cross Track Error (CTE)* also written as `e(t)`.
+
+`u(t) = Kp * e(t) + Ki * Integral_e(t) + Kd * Derivative_e(t)/dt`
+
+Where Kp, Ki, Kd are non-negative coefficients for the proportional, integral, differential terms, respectively.
+
+* `P` term accounts for present values of the CTE. If the error is large, the control output will also be large.
+* `I` term accounts for past values of the error. This term smoothens out the accumulated bias over time.
+* `D` term accounts for possible future values of the error, based on its current rate of change. 
+
+### Parameter Tuning 
+
+In this project, the PID values were chosen manually, and then optimized based on the performance of the car.
+
+Initially, the Kp value was set to a small value (~0.1) and Ki and Kd were set to 0, and the performance was observed. Kd was slowly increased until a wobble was observed, and then reduced to between 2.0 - 3.0. Ki was chosen to a very small value (0.0001) since the vehicle does not have an inherent steering bias.
+
+A second PID was introduced to control the Speed of the vehicle, via the `throttle` variable. A target speed limit was tested from a slow speed of 30 mph, and the car was observed to complete Track 1 correctly. The speed limit was then slowly raised till 80 mph in increments of 10 mph, and the K-coefficients were chosen manually to both increase the speed of the vehicle, while also performing within the bounds of the road. 
+
+Ultimately, the K-values for were as follows:
+
+Speed Limit: 65 mph
+
+| PID Controller | K-coefficient | Value |
+|----------------|---------------|-------|
+| Steering PID   |  Kp           | 0.13  |
+| - same -       |  Ki           | 0.0002|
+| - same -       |  Kd           | 2.0   |
+| Throttle PID   |  TKp          | 0.12  |
+| - same -       |  TKi          | 0.00001|
+| - same -       |  TKd          | 2.5   |
+
+
+### Improvements & Future Work
+
+1. A Twiddle algorithm could be implemented to algorithmically determine the K coefficients, instead of manual testing.
+2. A braking functionality could be implemented to slow down the vehicle during turns (steep steering angles).
+
 ---
 
 ## Dependencies
