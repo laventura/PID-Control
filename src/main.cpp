@@ -83,7 +83,7 @@ int main()
           // 2.1 - Update Steering CTE
           steering_pid.UpdateError(cte);
           // 2.2 - Get new steer value based on CTE
-          steer_value = -steering_pid.TotalError();  
+          steer_value = steering_pid.TotalError();  
           // smoothly clip the steering value: 
           // NOTE: This smoothens out the rough/jerky motion of the vehicle
           // NOTE: Even though the steering values are [-1, 1], we sometimes need sharper angles, 
@@ -92,7 +92,7 @@ int main()
 
           // 3.1 - Update Throttle CTE
           throttle_pid.UpdateError(speed_cte);
-          throttle_value  = -throttle_pid.TotalError();
+          throttle_value  = throttle_pid.TotalError();
           // smoothly clip the throttle values
           throttle_value = sigmoid(throttle_value, 1.0, -1.0);
           

@@ -40,6 +40,6 @@ double PID::TotalError() {
     // Total CTE: -Kp * cte - Ki * cte_sum - Kd * cte_diff
     // NOTE: the caller MUST negate the value of TotalError!
 
-    return p_error_ + i_error_ + d_error_;  
+    return -(p_error_ + i_error_ + d_error_);  
 }
 
